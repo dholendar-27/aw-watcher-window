@@ -97,48 +97,53 @@ def main():
 
 def heartbeat_loop(client, bucket_id, poll_time, strategy, exclude_title=False):
     while True:
-        if os.getppid() == 1:
-            logger.info("window-watcher stopped because parent process died")
-            break
-
-        current_window = None
-        try:
-            current_window = get_current_window(strategy)
-            logger.debug(current_window)
-        except (FatalError, OSError):
-            # Fatal exceptions should quit the program
-            try:
-                logger.exception("Fatal error, stopping")
-            except OSError:
-                pass
-            break
-        except Exception:
-            # Non-fatal exceptions should be logged
-            try:
-                # If stdout has been closed, this exception-print can cause (I think)
-                #   OSError: [Errno 5] Input/output error
-                # See: https://github.com/ActivityWatch/activitywatch/issues/756#issue-1296352264
-                #
-                # However, I'm unable to reproduce the OSError in a test (where I close stdout before logging),
-                # so I'm in uncharted waters here... but this solution should work.
-                logger.exception("Exception thrown while trying to get active window")
-            except OSError:
+        buckets = client.get_buckets()
+        if(buckets.get(bucket_id) is None): 
+            eventtype = "currentwindow"
+            client.create_bucket_if_not_exist(bucket_id, eventtype)
+        else:
+            if os.getppid() == 1:
+                logger.info("window-watcher stopped because parent process died")
                 break
 
-        if current_window is None:
-            logger.debug("Unable to fetch window, trying again on next poll")
-        else:
-            if exclude_title:
-                current_window["title"] = "excluded"
+            current_window = None
+            try:
+                current_window = get_current_window(strategy)
+                logger.debug(current_window)
+            except (FatalError, OSError):
+                # Fatal exceptions should quit the program
+                try:
+                    logger.exception("Fatal error, stopping")
+                except OSError:
+                    pass
+                break
+            except Exception:
+                # Non-fatal exceptions should be logged
+                try:
+                    # If stdout has been closed, this exception-print can cause (I think)
+                    #   OSError: [Errno 5] Input/output error
+                    # See: https://github.com/ActivityWatch/activitywatch/issues/756#issue-1296352264
+                    #
+                    # However, I'm unable to reproduce the OSError in a test (where I close stdout before logging),
+                    # so I'm in uncharted waters here... but this solution should work.
+                    logger.exception("Exception thrown while trying to get active window")
+                except OSError:
+                    break
 
-            now = datetime.now(timezone.utc)
-            current_window_event = Event(timestamp=now, data=current_window)
+            if current_window is None:
+                logger.debug("Unable to fetch window, trying again on next poll")
+            else:
+                if exclude_title:
+                    current_window["title"] = "excluded"
 
-            # Set pulsetime to 1 second more than the poll_time
-            # This since the loop takes more time than poll_time
-            # due to sleep(poll_time).
-            client.heartbeat(
-                bucket_id, current_window_event, pulsetime=poll_time + 1.0, queued=True
-            )
+                now = datetime.now(timezone.utc)
+                current_window_event = Event(timestamp=now, data=current_window)
 
-        sleep(poll_time)
+                # Set pulsetime to 1 second more than the poll_time
+                # This since the loop takes more time than poll_time
+                # due to sleep(poll_time).
+                client.heartbeat(
+                    bucket_id, current_window_event, pulsetime=poll_time + 1.0, queued=True
+                )
+
+            sleep(poll_time)

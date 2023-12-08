@@ -6,7 +6,7 @@ default_config = """
 [aw-watcher-window]
 exclude_title = false
 poll_time = 1.0
-strategy_macos = "swift"
+strategy_macos = "jxa"
 """.strip()
 
 
