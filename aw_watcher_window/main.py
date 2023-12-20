@@ -143,7 +143,7 @@ def heartbeat_loop(client, bucket_id, poll_time, strategy, exclude_title=False):
             # This since the loop takes more time than poll_time
             # due to sleep(poll_time).
             client.heartbeat(
-                bucket_id, current_window_event, pulsetime=poll_time + 1.0, queued=True
+                bucket_id, current_window_event, pulsetime=poll_time + 59.0, queued=True
             )
 
         sleep(poll_time)
