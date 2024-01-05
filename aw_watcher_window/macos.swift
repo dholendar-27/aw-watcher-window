@@ -118,7 +118,7 @@ func error(_ msg: String) {
 }
 
 // Placeholder values, set in start() from CLI arguments
-var baseurl = "http://localhost:5600"
+var baseurl = "http://localhost:7600"
 // NOTE: this differs from the hostname we get from Python, here we get `.local`, but in Python we get `.localdomain`
 var clientHostname = ProcessInfo.processInfo.hostName
 var clientName = "aw-watcher-window"
