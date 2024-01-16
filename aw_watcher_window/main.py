@@ -19,11 +19,17 @@ logger = logging.getLogger(__name__)
 
 # run with LOG_LEVEL=DEBUG
 log_level = os.environ.get("LOG_LEVEL")
+# Set the log level to the current log level.
 if log_level:
     logger.setLevel(logging.__getattribute__(log_level.upper()))
 
 
 def kill_process(pid):
+    """
+     Kill a process by PID. This is a wrapper around os. kill that doesn't raise ProcessLookupError
+     
+     @param pid - PID of the process to
+    """
     logger.info("Killing process {}".format(pid))
     try:
         os.kill(pid, signal.SIGTERM)
@@ -32,8 +38,12 @@ def kill_process(pid):
 
 
 def main():
+    """
+     Main function for aw - watcher. Creates a bucket and waits for it to start. This is a blocking call
+    """
     args = parse_args()
 
+    # Raise an exception if DISPLAY environment variable is not set.
     if sys.platform.startswith("linux") and (
         "DISPLAY" not in os.environ or not os.environ["DISPLAY"]
     ):
@@ -47,6 +57,7 @@ def main():
         log_file=True,
     )
 
+    # Ensure permissions are available on the system.
     if sys.platform == "darwin":
         background_ensure_permissions()
 
@@ -63,6 +74,7 @@ def main():
 
     sleep(1)  # wait for server to start
     with client:
+        # This function is called by the swift strategy.
         if sys.platform == "darwin" and args.strategy == "swift":
             logger.info("Using swift strategy, calling out to swift binary")
             binpath = os.path.join(
@@ -96,12 +108,23 @@ def main():
 
 
 def heartbeat_loop(client, bucket_id, poll_time, strategy, exclude_title=False):
+    """
+     This is the heart of the activity watch. It polls the bucket_id every poll_time until it is stopped.
+     
+     @param client - The client to use for communication
+     @param bucket_id - The id of the bucket to watch
+     @param poll_time - The time to poll for changes in the bucket
+     @param strategy - The strategy to use for the window ( s )
+     @param exclude_title - If True the title will not be
+    """
+    # This function is a loop that loops over all the buckets and creates a new window and then polls the window.
     while True:
         # buckets = client.get_buckets()
         # if(buckets.get(bucket_id) is None):
         #     eventtype = "currentwindow"
         #     client.create_bucket_if_not_exist(bucket_id, eventtype)
         # else:
+        # If parent process is running
         if os.getppid() == 1:
             logger.info("window-watcher stopped because parent process died")
             break
@@ -130,9 +153,11 @@ def heartbeat_loop(client, bucket_id, poll_time, strategy, exclude_title=False):
             except OSError:
                 break
 
+        # Fetch the next poll. If the window is not yet available on the next poll it will be ignored.
         if current_window is None:
             logger.debug("Unable to fetch window, trying again on next poll")
         else:
+            # If exclude_title is set to excluded
             if exclude_title:
                 current_window["title"] = "excluded"
 

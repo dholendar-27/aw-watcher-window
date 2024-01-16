@@ -9,15 +9,15 @@ script = None
 
 def compileScript():
     """
-    Compiles the JXA script and caches the result.
-
-    Resources:
-     - https://stackoverflow.com/questions/44209057/how-can-i-run-jxa-from-swift
-     - https://stackoverflow.com/questions/16065162/calling-applescript-from-python-without-using-osascript-or-appscript
+     Compiles JXA script and caches the result. Resources. This is useful for performance purposes. If you want to run a script that does not require a language you can use L { compileScript }
+     
+     
+     @return a compiled script or
     """
 
     # use a global variable to cache the compiled script for performance
     global script
+    # Returns the script to be executed.
     if script:
         return script
 
@@ -30,6 +30,7 @@ def compileScript():
         scriptContents = f.read()
 
         # remove shebang line
+        # Returns the script contents of the script.
         if scriptContents.split("\n")[0].startswith("#"):
             scriptContents = "\n".join(scriptContents.split("\n")[1:])
 
@@ -39,6 +40,7 @@ def compileScript():
     success, err = script.compileAndReturnError_(None)
 
     # should only occur if jxa was modified incorrectly
+    # if success is true raise an exception
     if not success:
         raise Exception(f"error compiling jxa script: {err['NSLocalizedDescription']}")
 
@@ -46,10 +48,17 @@ def compileScript():
 
 
 def getInfo() -> Dict[str, str]:
+    """
+     Get information about jxa. This is a wrapper around compileScript and executeAndReturnError_.
+     
+     
+     @return Dictionary with the following keys : ns_localized : A human readable name of the object. ns_localizedFailureReason : A descriptive error message
+    """
     script = compileScript()
 
     result, err = script.executeAndReturnError_(None)
 
+    # error structure for the error.
     if err:
         # error structure:
         # {
@@ -66,6 +75,7 @@ def getInfo() -> Dict[str, str]:
     return json.loads(result.stringValue())
 
 
+# This function is called by the main class.
 if __name__ == "__main__":
     print(getInfo())
     print("Waiting 5 seconds...")

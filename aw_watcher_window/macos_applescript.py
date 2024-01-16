@@ -29,13 +29,21 @@ script = None
 
 
 def getInfo() -> Dict[str, str]:
+    """
+     Get information about Apple. This is a helper function to make it easier to use in tests.
+     
+     
+     @return A dictionary with app and title keys. The keys are " app " and " title " which are the name of the app
+    """
     # Cache compiled script
     global script
+    # Initialize the script object with the source.
     if script is None:
         script = NSAppleScript.alloc().initWithSource_(source)
 
     # Call script
     result, errorinfo = script.executeAndReturnError_(None)
+    # If errorinfo is set to true raise an exception.
     if errorinfo:
         raise Exception(errorinfo)
     output = result.stringValue()
@@ -50,13 +58,28 @@ def getInfo() -> Dict[str, str]:
 
 
 def getApp(info: str) -> str:
+    """
+     Extracts the app name from the info string. This is used to determine the name of the application that is running.
+     
+     @param info - The info string from the command line. Should be of the form " app_name \ n "
+     
+     @return The app name as
+    """
     return info.split('\n')[0]
 
 
 def getTitle(info: str) -> str:
+    """
+     Extracts the title from the info string. This is used to determine the page title in the list of pages
+     
+     @param info - the info string from the web page
+     
+     @return the title of the page as a string ( without the tab and line breaks in the info string if there is a tab
+    """
     return info.split('\n')[1]
 
 
+# Print info about the module.
 if __name__ == "__main__":
     info = getInfo()
     print(info)
