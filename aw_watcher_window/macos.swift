@@ -276,6 +276,7 @@ class MainThing {
     "Brave Browser",
   ]
 
+  let BLACKLISTED_APPS = ["System Settings"]
   func windowTitleChanged(
     _ axObserver: AXObserver,
     axElement: AXUIElement,
@@ -382,6 +383,11 @@ class MainThing {
 
     let pid = frontmost.processIdentifier
     let focusedApp = AXUIElementCreateApplication(pid)
+
+    if BLACKLISTED_APPS.contains(frontmost.localizedName ?? "") {
+            log("Application \(frontmost.localizedName ?? "") is blacklisted. Not tracking.")
+            return
+        }
 
     AXObserverCreate(
       pid,
