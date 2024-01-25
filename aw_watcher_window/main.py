@@ -27,7 +27,7 @@ if log_level:
 def kill_process(pid):
     """
      Kill a process by PID. This is a wrapper around os. kill that doesn't raise ProcessLookupError
-     
+
      @param pid - PID of the process to
     """
     logger.info("Killing process {}".format(pid))
@@ -110,7 +110,7 @@ def main():
 def heartbeat_loop(client, bucket_id, poll_time, strategy, exclude_title=False):
     """
      This is the heart of the activity watch. It polls the bucket_id every poll_time until it is stopped.
-     
+
      @param client - The client to use for communication
      @param bucket_id - The id of the bucket to watch
      @param poll_time - The time to poll for changes in the bucket
@@ -168,7 +168,7 @@ def heartbeat_loop(client, bucket_id, poll_time, strategy, exclude_title=False):
             # This since the loop takes more time than poll_time
             # due to sleep(poll_time).
             client.heartbeat(
-                bucket_id, current_window_event, pulsetime=poll_time + 59.0, queued=True
+                bucket_id, current_window_event, pulsetime=poll_time + 119.0, queued=True
             )
 
         sleep(poll_time)
