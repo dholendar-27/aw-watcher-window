@@ -307,21 +307,16 @@ class MainThing {
 
       let frontWindow = chromeObject.windows!()[0]
       let activeTab = frontWindow.activeTab!
-
-      if frontWindow.mode == "incognito" {
-        data = NetworkMessage(app: "", title: "")
-      } else {
-        data.url = activeTab.URL
+      data.url = activeTab.URL
 
         // the tab title is more accurate and often different than the window title
         // however, in some cases the binary does not have the right permissions to read
         // the title properly and will return a blank string
 
-        if let tabTitle = activeTab.title {
-          if(tabTitle != "" && data.title != tabTitle) {
-            error("tab title diff: \(tabTitle), window title: \(data.title ?? "")")
-            data.title = tabTitle
-          }
+      if let tabTitle = activeTab.title {
+         if(tabTitle != "" && data.title != tabTitle) {
+           error("tab title diff: \(tabTitle), window title: \(data.title ?? "")")
+           data.title = tabTitle
         }
       }
     } else if frontmost.localizedName == "Safari" {
