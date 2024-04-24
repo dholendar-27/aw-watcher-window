@@ -1,0 +1,65 @@
+[tool.poetry]
+name = "sd-core"
+version = "0.5.16"
+description = "Core library for ActivityWatch"
+authors = ["Erik Bjäreholt <erik@bjareho.lt>", "Johan Bjäreholt <johan@bjareho.lt>"]
+license = "MPL-2.0"
+readme = "README.md"
+homepage = "https://activitywatch.net/"
+repository = "https://github.com/ActivityWatch/sd-core/"
+documentation = "https://docs.activitywatch.net/"
+packages = [
+    { include = "sd_core" },
+    { include = "sd_datastore" },
+    { include = "sd_transform" },
+    { include = "sd_query" },
+]
+
+[tool.poetry.scripts]
+sd-cli = "sd_cli.__main__:main"
+
+[tool.poetry.dependencies]
+python = "^3.8"
+jsonschema = "^4.3"
+peewee = "3.*"
+cachetools ="*"
+platformdirs = "3.10"  # pinned due to sometimes breaking changes in minor versions: https://github.com/ActivityWatch/sd-core/pull/122#issuecomment-1768020335
+iso8601 = "^1.0.2"
+rfc3339-validator = "^0.1.4"  # needed for the date-type format in jsonschema
+strict-rfc3339 = "^0.7"
+tomlkit = "*"
+deprecation = "*"
+timeslot = "*"
+cryptography = "*"
+cryptocode = "*"
+tldextract = "*"
+winshell = {version = "*", markers = "sys_platform == 'win32'" }
+pysqlcipher3 = [
+    { version = "*", markers = "sys_platform == 'linux' or sys_platform == 'darwin'" },
+    { file = "pysqlcipher3-1.2.0-cp311-cp311-win_amd64.whl", markers = "sys_platform == 'win32'" }
+]
+python-pam="*"
+sqlcipher3 = [
+    { version = "*", markers = "sys_platform == 'linux' or sys_platform == 'darwin'" },
+    { file = "sqlcipher3-0.5.2-cp311-cp311-win_amd64.whl", markers = "sys_platform == 'win32'" }
+]
+keyrings-alt = "^5.0.0"
+keyring = "^25.0.0"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^7.0"
+pytest-cov = "*"
+mypy = "*"
+pylint = "*"
+black = "*"
+ruff = "*"
+pyupgrade = "*"
+TakeTheTime = "^0.3.1"
+
+
+[tool.ruff]
+ignore = ["E402", "E501"]
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
