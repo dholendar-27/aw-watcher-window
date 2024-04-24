@@ -1,0 +1,46 @@
+[tool.poetry]
+name = "sd-client"
+version = "0.5.12"
+description = "Client library for ActivityWatch"
+authors = ["Erik Bjäreholt <erik@bjareho.lt>", "Johan Bjäreholt <johan@bjareho.lt>"]
+license = "MPL-2.0"
+readme = "README.md"
+homepage = "https://activitywatch.net/"
+repository = "https://github.com/ActivityWatch/aw-client/"
+documentation = "https://docs.activitywatch.net/"
+packages = [
+    { include = "sd_client" },
+]
+
+[tool.poetry.scripts]
+aw-client = "sd_client.cli:main"
+
+[tool.poetry.dependencies]
+python = "^3.8"
+aw-core = "^0.5.7"
+requests = "*"
+click = "^8.0"
+tabulate = "*"
+typing-extensions = "*"
+
+[tool.poetry.dev-dependencies]
+pytest = "^7.0"
+pytest-cov = "*"
+mypy = "*"
+pylint = "*"
+types-requests = "*"
+types-tabulate = "*"
+pyupgrade = "*"
+black = "*"
+
+[tool.mypy]
+files = ["aw_client", "tests", "examples"]
+ignore_missing_imports = true
+check_untyped_defs = true
+
+[tool.ruff]
+ignore = ["E402", "E501"]
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
