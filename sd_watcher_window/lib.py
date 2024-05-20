@@ -71,7 +71,7 @@ def get_current_window_windows() -> Optional[dict]:
         title = "unknown"
 
     # Returns a dictionary with app title url
-    if "chrome" in app or "firefox" in app or "msedge" in app:
+    if "chrome" in app or "firefox" in app or "msedge" or "opera" in app:
         url = windows.get_current_tab_info(browser_exe=app.split("*")[0], handle=window_handle)
         return {"app": app, "title": title, "url": url}
 
