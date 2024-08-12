@@ -114,13 +114,10 @@ def get_current_tab_info(browser_exe: str, handle: str) -> str:
 
         dlg = app.top_window()
         # Get the URL of the Edit button.
-        if "msedge" in browser_exe:
-            wrapper = dlg.child_window(title=element_name, control_type="ToolBar")
-            url = wrapper.descendants(control_type='Edit')[0]
-            return url.get_value()
-        else:
+        if not "msedge" in browser_exe:
             url = dlg.child_window(title=element_name, control_type="Edit").get_value()
             return url
+
     except Exception as e:
         return None
 
