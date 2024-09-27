@@ -105,7 +105,7 @@ def get_current_tab_info(browser_exe: str, handle: str) -> str:
         address_bar_labels = {
             "Vivaldi": "Search or enter an address",
             "Firefox": "Search with Google or enter address",
-            "Opera": "Address field",
+            "Opera": "Enter search or web address",
             "Chrome": "Address and search bar"
         }
 

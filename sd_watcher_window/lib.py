@@ -39,13 +39,9 @@ def get_current_window_macos(strategy: str) -> Optional[dict]:
     # `jxa` is the default & preferred strategy. It includes the url + incognito status
     # Returns information about the current platform.
     if strategy == "jxa":
-        from . import macos_jxa
-
-        return macos_jxa.getInfo()
+        pass
     elif strategy == "applescript":
-        from . import macos_applescript
-
-        return macos_applescript.getInfo()
+        pass
     else:
         raise FatalError(f"invalid strategy '{strategy}'")
 
